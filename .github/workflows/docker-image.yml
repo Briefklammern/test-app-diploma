@@ -3,8 +3,6 @@ name: Build and Push Docker Image
 on:
   push:
     branches: [ "main" ] # Запуск при пуше в main
-  pull_request:
-    branches: [ "main" ] # Запуск при создании PR (можно использовать для тестирования)
 
 jobs:
   build-and-push:
