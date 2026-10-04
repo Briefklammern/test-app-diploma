@@ -33,4 +33,4 @@ jobs:
           push: true
           # Теги: latest для main и SHA коммита для уникальности
           tags: |
-            ${{ secrets.DOCKER_USERNAME }}/your-image-name:latest
+            ${{ secrets.DOCKER_USERNAME }}/test-app-diploma:latest
