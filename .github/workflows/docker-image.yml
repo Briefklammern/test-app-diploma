@@ -7,10 +7,15 @@ on:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      # 0. Генерация тега с датой и временем (формат ггммдд-чч-мм)
+      - name: Set date and time tag
+        id: datetime
+        run: echo "TAG=$(TZ='Europe/Moscow' date +'%y%m%d-%H-%M')" >> $GITHUB_OUTPUT
 
       # 1. Вход в Docker Hub
       - name: Login to Docker Hub
@@ -29,7 +34,7 @@ jobs:
         with:
           context: .
           push: true
-          # Теги: latest для main и SHA коммита для уникальности
+          # Теги: дата-время и SHA коммита для уникальности
           tags: |
-            ${{ secrets.DOCKER_USERNAME }}/test-app-diploma:latest
+            ${{ secrets.DOCKER_USERNAME }}/test-app-diploma:${{ steps.datetime.outputs.TAG }}
             ${{ secrets.DOCKER_USERNAME }}/test-app-diploma:${{ github.sha }}
