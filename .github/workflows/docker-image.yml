@@ -32,3 +32,22 @@ jobs:
           # Теги: latest для main и SHA коммита для уникальности
           tags: |
             ${{ secrets.DOCKER_USERNAME }}/test-app-diploma:latest
+
+      # 4. Деплой на исполняемую ВМ по SSH
+      - name: Deploy to VM
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            docker pull ${{ secrets.DOCKER_USERNAME }}/test-app-diploma:latest
+
+            docker stop test-app-diploma || true
+            docker rm test-app-diploma || true
+
+            docker run -d \
+              --name test-app-diploma \
+              --restart unless-stopped \
+              -p 8080:80 \
+              ${{ secrets.DOCKER_USERNAME }}/test-app-diploma:latest
