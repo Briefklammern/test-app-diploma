@@ -1,0 +1,35 @@
+name: Build and Push Docker Image
+
+on:
+  push:
+    branches: [ "main" ] # Запуск при пуше в main
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 1. Вход в Docker Hub
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # 2. Настройка Buildx (для кэширования и мультиплатформенных сборок)
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # 3. Сборка и пуш
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          # Теги: latest для main и SHA коммита для уникальности
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/test-app-diploma:latest
+            ${{ secrets.DOCKER_USERNAME }}/test-app-diploma:${{ github.sha }}
